@@ -1,0 +1,45 @@
+version: "3"
+services:
+  proxy:
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - "7000:80"
+  storage:
+    image: "postgres:latest"
+  inmem:
+    image: "redis:latest"
+  api:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./api
+    volumes:
+      - /app/node_modules
+      - ./api:/app
+    environment:
+      - REDIS_HOST=inmem
+      - REDIS_PORT=6379
+      - PGUSER=postgres
+      - PGHOST=storage
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+  ui:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./ui
+    volumes:
+      - /app/node_modules
+      - ./ui:/app
+  worker:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    volumes:
+      - /app/node_modules
+      - ./worker:/app
+    environment:
+      - REDIS_HOST=inmem
+      - REDIS_PORT=6379
