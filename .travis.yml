@@ -1,0 +1,21 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker build -t yanis1/complex-test -f ./ui/Dockerfile.dev ./ui
+
+script:
+  - docker run yanis1/complex-test npm test -- --coverage
+
+after_success:
+  - docker build -t yanis1/complex-ui ./ui
+  - docker build -t yanis1/complex-api ./api
+  - docker build -t yanis1/complex-worker ./worker
+  - docker build -t yanis1/complex-nginx ./nginx
+  - docker login -u "$DOCKER_ID" -p "$DOCKER_PASSWORD"
+  - docker push yanis1/complex-ui
+  - docker push yanis1/complex-api
+  - docker push yanis1/complex-worker
+  - docker push yanis1/complex-nginx
