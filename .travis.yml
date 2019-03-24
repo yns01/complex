@@ -14,7 +14,7 @@ after_success:
   - docker build -t yanis1/complex-api ./api
   - docker build -t yanis1/complex-worker ./worker
   - docker build -t yanis1/complex-nginx ./nginx
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" -password-stdin
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   - docker push yanis1/complex-ui
   - docker push yanis1/complex-api
   - docker push yanis1/complex-worker
